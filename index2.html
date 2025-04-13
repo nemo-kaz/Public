@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPS座標表示</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f0f0f0;
+    }
+    #coords {
+      font-size: 1.2em;
+      margin-top: 2em;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>あなたの現在地（GPS）</h1>
+  <p>ボタンをタップすると、現在の緯度・経度が表示されます。</p>
+  <button onclick="getLocation()">位置情報を取得する</button>
+
+  <div id="coords"></div>
+
+  <script>
+    function getLocation() {
+      const coordsDiv = document.getElementById("coords");
+
+      if (!navigator.geolocation) {
+        coordsDiv.innerHTML = "<p class='error'>お使いのブラウザは位置情報に対応していません。</p>";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          coordsDiv.innerHTML = `<p>緯度：${lat}</p><p>経度：${lon}</p>`;
+        },
+        function(error) {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              coordsDiv.innerHTML = "<p class='error'>位置情報の使用が拒否されました。</p>";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              coordsDiv.innerHTML = "<p class='error'>位置情報が利用できません。</p>";
+              break;
+            case error.TIMEOUT:
+              coordsDiv.innerHTML = "<p class='error'>タイムアウトしました。</p>";
+              break;
+            default:
+              coordsDiv.innerHTML = "<p class='error'>不明なエラーが発生しました。</p>";
+              break;
+          }
+        }
+      );
+    }
+  </script>
+</body>
+</html>
